@@ -7,8 +7,8 @@
     "consume": "node consumer.js"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.541.0",
-    "axios": "^1.7.2",
-    "dotenv": "^16.4.5"
+    "@aws-sdk/client-sqs": "^3.518.0",
+    "axios": "^1.6.8",
+    "dotenv": "^16.3.1"
   }
 }

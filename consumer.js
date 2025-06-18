@@ -1,13 +1,15 @@
-import AWS from 'aws-sdk';
+import { SQSClient, ReceiveMessageCommand, DeleteMessageCommand, SendMessageCommand } from '@aws-sdk/client-sqs';
 import axios from 'axios';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const sqs = new AWS.SQS({ region: 'us-east-1' });
+const REGION = process.env.REGION || 'us-east-1';
 const QUEUE_URL = process.env.QUEUE_URL;
 const DLQ_URL = process.env.DLQ_URL;
 const API_HOST = process.env.API_HOST;
+
+const sqs = new SQSClient({ region: REGION });
 
 console.log("👂 Listening for messages from:", QUEUE_URL);
 
@@ -21,29 +23,29 @@ async function processMessage(message) {
   } catch (err) {
     console.error("❌ API failed for", mc_id, "-", err.message);
     if (DLQ_URL) {
-      await sqs.sendMessage({
+      await sqs.send(new SendMessageCommand({
         QueueUrl: DLQ_URL,
         MessageBody: JSON.stringify({ mc_id, error: err.message }),
-      }).promise();
+      }));
       console.log("↩️ Sent to DLQ:", mc_id);
     }
   }
 
-  await sqs.deleteMessage({
+  await sqs.send(new DeleteMessageCommand({
     QueueUrl: QUEUE_URL,
     ReceiptHandle: message.ReceiptHandle,
-  }).promise();
+  }));
 }
 
 async function poll() {
-  const { Messages } = await sqs.receiveMessage({
+  const result = await sqs.send(new ReceiveMessageCommand({
     QueueUrl: QUEUE_URL,
     MaxNumberOfMessages: 10,
     WaitTimeSeconds: 10,
-  }).promise();
+  }));
 
-  if (Messages && Messages.length > 0) {
-    for (const message of Messages) {
+  if (result.Messages && result.Messages.length > 0) {
+    for (const message of result.Messages) {
       await processMessage(message);
     }
   } else {
@@ -54,7 +56,7 @@ async function poll() {
 }
 
 poll();
-// ⏲ Exit after 5 minutes (300000 ms)
+
 setTimeout(() => {
   console.log("🛑 Time limit reached (5 minutes). Exiting gracefully...");
   process.exit(0);
