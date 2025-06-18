@@ -54,3 +54,8 @@ async function poll() {
 }
 
 poll();
+// ⏲ Exit after 5 minutes (300000 ms)
+setTimeout(() => {
+  console.log("🛑 Time limit reached (5 minutes). Exiting gracefully...");
+  process.exit(0);
+}, 5 * 60 * 1000);
