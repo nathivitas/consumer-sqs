@@ -1,0 +1,14 @@
+{
+  "name": "yp-fulfillment-consumer",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "consumer.js",
+  "scripts": {
+    "consume": "node consumer.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sqs": "^3.541.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5"
+  }
+}
