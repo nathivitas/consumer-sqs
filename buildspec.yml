@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   variables:
-    IMAGE_NAME: yp-sqs-producer
-    REPO_URI: 165274966895.dkr.ecr.us-east-1.amazonaws.com/yp-sqs-producer
+    IMAGE_NAME: yp-sqs-consumer
+    REPO_URI: 165274966895.dkr.ecr.us-east-1.amazonaws.com/yp-sqs-consumer
     AWS_DEFAULT_REGION: us-east-1
 
 phases:
